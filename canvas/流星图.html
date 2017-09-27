@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>流星图</title>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1XjLLEhZhQNUzd93EjU5nOGQ"></script>
+</head>
+<body>
+<div style="width:800px;height:600px;background-color: green;" id="map"></div>
+<script type="text/javascript">
+
+var Meteor = function(start, end, ctx, config) {
+	this.init(start, end, ctx, config);
+}
+
+Meteor.prototype = {
+	init: function(start, end, ctx, config) {
+		this.start = start;
+		this.end = end;
+		this.current = [start[0], start[1]];
+		this.config = config;
+		this.ctx = ctx;
+		this.r = config.radius;
+		this.perSecShift = config.perSecShift;
+	},
+
+	update: function() {
+		if(this.distance(this.end, this.current) > this.perSecShift) {
+			var v = this.calculateVelocity(this.start, this.end, this.perSecShift);
+			this.current[0] += v[0];
+			this.current[1] += v[1];
+		}
+	},
+
+	setColor: function(color) {
+		this.color = color;
+	},
+
+	draw: function() {
+		if(this.isEnd() && !this.isCancle()) {
+			this.r += 0.8;
+		}
+		this.ctx.beginPath();
+		this.ctx.arc(this.current[0], this.current[1], this.r, 0, 2*Math.PI);
+		this.ctx.fillStyle = this.color;
+		if(!this.isEnd()){
+			this.ctx.fillStyle = this.color;
+			this.ctx.fill();
+		} else {
+			this.ctx.strokeStyle = this.color;
+			this.ctx.stroke();
+		}
+	},
+
+	isEnd: function() {
+		return this.distance(this.end, this.current) <= this.perSecShift;
+	},
+
+	isCancle: function() {
+		return this.isEnd() && (this.r > 10 * this.config.radius);
+	},
+
+	distance: function(a, b) {
+		return Math.sqrt((a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]));
+	},
+
+	calculateVelocity: function(start, end, distance) {
+		var theta = Math.atan2(end[1] - start[1],end[0] - start[0]);
+		var y = distance * Math.sin(theta);
+		var x = distance * Math.cos(theta);
+
+		return [x, y];
+	}
+
+}
+
+
+function CanvasLayer(options) {
+	this.options = options || {};
+	this.paneName = this.options.paneName || 'labelPane';
+	this.zIndex = this.options.zIndex || 0;
+	this.context = this.options.context || '2d';
+	this._map = options.map;
+	this.show();
+}
+
+CanvasLayer.prototype = new BMap.Overlay();
+CanvasLayer.prototype.initialize = function (map) {
+	this._map = map;
+	var canvas = this.canvas = document.createElement("canvas");
+	canvas.style.cssText = "position:absolute;"
+						 + "left: 0;"
+						 + "top: 0;"
+						 + "z-index:" + this.zIndex + ";"
+
+	this.adjustSize();
+	map.getPanes()[this.paneName].appendChild(canvas);
+	var that = this;
+	map.addEventListener('resize', function() {
+		that.adjustSize();
+		that.draw();
+	})
+	return this.canvas;
+}
+
+CanvasLayer.prototype.adjustSize = function() {
+	var size = this._map.getSize();
+	var canvas = this.canvas;
+	var pixelRatio;
+
+	if(this.context == 'webgl') {
+		pixelRatio = 1;
+	} else {
+		pixelRatio = (function(context){
+			var backingStore = context.backingStorePixelRatio || 
+							context.webkitBackingStorePixelRatio || 
+							context.mozBackingStorePixelRatio ||
+							context.msBackingStorePixelRatio ||
+                            context.oBackingStorePixelRatio ||
+                            context.backingStorePixelRatio || 1;
+			return (window.devicePixelRatio || 1) / backingStore;
+		}(canvas.getContext('2d')));
+	}
+
+	canvas.width = size.width * pixelRatio;
+	canvas.height = size.height * pixelRatio;
+	canvas.style.width = size.width + 'px';
+	canvas.style.height = size.height + 'px';
+}
+
+CanvasLayer.prototype.draw = function() {
+	var map = this._map;
+	var size = map.getSize();
+	var center = map.getCenter();
+
+	if (center) {
+		var pixel = map.pointToOverlayPixel(center);
+		this.canvas.style.left = pixel.x - size.width / 2 + 'px';
+		this.canvas.style.top = pixel.y - size.height / 2 + 'px';
+		//this.dispatchEvent('draw');
+		//this.options.update && this.options.update.call(this);
+		this.updateHandler && this.updateHandler.call(this, this.canvas.getContext('2d'))();
+	}
+}
+
+CanvasLayer.prototype.setPainter = function(handler) {
+	this.updateHandler = handler;
+}
+
+CanvasLayer.prototype.getContainer = function() {
+	return this.canvas;
+}
+
+CanvasLayer.prototype.show = function() {
+	if(!this.canvas) {
+		this._map.addOverlay(this);
+	}
+	this.canvas.style.display = 'block';
+}
+
+CanvasLayer.prototype.hide = function() {
+	this.canvas.style.display = 'none';
+}
+
+CanvasLayer.prototype.setZIndex = function(zIndex) {
+	this.canvas.style.zIndex = zIndex;
+}
+
+CanvasLayer.prototype.getZIndex = function() {
+	return this.zIndex;
+}
+
+// 百度地图API功能
+var map = new BMap.Map("map");    // 创建Map实例
+map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);  // 初始化地图,设置中心点坐标和地图级别
+//map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+var container = [];
+var count = 1;
+var backDom = document.createElement('canvas');
+backDom.height = 600;
+backDom.width = 800;
+var backCtx = backDom.getContext('2d');
+
+function draw(ctx) {
+	return function(){
+		backCtx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		backCtx.drawImage(
+            ctx.canvas, 0, 0,
+            ctx.canvas.width,
+            ctx.canvas.height
+        );
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.save();
+        ctx.globalAlpha = 0.8;
+        ctx.drawImage(backDom, 0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.restore();
+		count ++;
+		if(container.length <25 && (count % 20 == 0)) {
+			var mete = new Meteor([500*Math.random(), 500*Math.random()], [ctx.canvas.width*Math.random(), ctx.canvas.height*Math.random()], ctx, {height:ctx.canvas.height, width: ctx.canvas.width, radius: 3.5, perSecShift: 4});
+			mete.setColor('rgb(' + ~~(Math.random()*255) + ',' + ~~(Math.random()*255) + ',' + ~~(Math.random()*255) + ')');
+			container.push(mete);
+		}
+
+		for(var i=0; i<container.length; i++) {
+			if(container[i].isCancle()) {
+				container.splice(i,1);
+				i--;
+			}else{
+				container[i].draw();
+				container[i].update();
+			}
+		}
+		ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+		//ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		//ctx.globalAlpha=0.2;
+		//ctx.globalCompositeOperation="destination-over";
+		requestAnimationFrame(draw(ctx));
+	};
+	// mete.draw();
+	// mete.update();
+}
+var layer = new CanvasLayer({map: map, zIndex: -1});
+layer.setPainter(draw);
+layer.draw();
+//draw();
+</script>
+</body>
+</html>
