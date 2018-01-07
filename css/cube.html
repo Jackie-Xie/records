@@ -1,0 +1,234 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>cube</title>
+        <style>
+            *{
+                box-sizing: border-box;
+            }
+            .container {
+                transform-style: preserve-3d; 
+                /* animation: rotate 30s infinite; */
+                transform-origin: 150px 150px 0px; 
+                transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+                height: 152px;
+                width: 152px;
+                margin: auto;
+                margin-top: 200px;
+            }
+
+            .cube {
+                position: absolute;
+                width: 150px;
+                height: 150px;
+                margin: 15%;
+            }
+
+            .block {
+                height: 50px;
+                width: 50px;
+                border:1px solid black;
+                float: left;
+            }
+
+            .one .block {
+                background: rgb(245, 178, 55);
+            }
+
+            .two .block {
+                background: rgb(241, 6, 25);
+            }
+
+            .three .block {
+                background: rgb(252, 89, 13);
+            }
+
+            .four .block {
+                background: #fff;
+            }
+
+            .five .block {
+                background: rgb(27, 23, 255);
+            }
+
+            .six .block {
+                background: rgb(5, 245, 17)
+            }
+
+            .one {
+                transform: translateZ(75px);
+            }
+
+            .two {
+                transform: rotateX(-90deg) translateZ(75px); 
+            }
+
+            .three {
+                transform: rotateX(90deg) translateZ(75px);  
+            }
+            
+            .four {
+                transform: rotateZ(180deg) rotateY(180deg) translateZ(75px);
+            }
+
+            .five {
+                transform: rotateY(-90deg) translateZ(75px);
+            }
+
+            .six {
+                transform: rotateY(90deg) translateZ(75px);
+            }
+
+            .scale {
+                position: fixed;
+                right: 20px;
+                top: 20px;
+            }
+
+            .form-control {
+                max-width: 100px;
+            }
+
+            @keyframes rotate {  
+                from,  
+                to {}  
+                15% {  
+                    transform: rotateY(-135deg);  
+                }  
+                30% {  
+                    transform: rotateY(-90deg)rotateZ(135deg);  
+                }  
+                45% {  
+                    transform: rotateY(225deg)rotateZ(135deg);  
+                }  
+                60% {  
+                    transform: rotateY(135deg)rotateX(135deg);  
+                }  
+                75% {  
+                    transform: rotateX(135deg)rotateY(225deg);  
+                }  
+                90% {  
+                    transform: rotateX(-135deg);  
+                }  
+            } 
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="cube one">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+            </div>
+            <div class="cube two">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+            </div>
+            <div class="cube three">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+            </div>
+            <div class="cube four">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+            </div>
+            <div class="cube five">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+            </div>
+            <div class="cube six">
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+                <div class="block"></div>
+            </div>
+        </div>
+        <div class="scale">
+            <p>
+                X:<input type="range" name="rotateX" min="0" max="360" value="0"/>
+                <input type="text" id="J_rx" class="form-control"/>
+            </p>
+            <p>
+                Y:<input type="range" name="rotateY" min="0" max="360" value="0"/>
+                <input type="text" id="J_ry" class="form-control"/>
+            </p>
+            <p>
+                Z:<input type="range" name="rotateZ" min="0" max="360" value="0"/>
+                <input type="text" id="J_rz" class="form-control"/>
+            </p>
+        </div>
+
+        <script type="text/javascript">
+            var scaleX = document.getElementsByName("rotateX")[0];
+            var scaleY = document.getElementsByName("rotateY")[0];
+            var scaleZ = document.getElementsByName("rotateZ")[0];
+            var valueX = document.getElementById("J_rx");
+            var valueY = document.getElementById("J_ry");
+            var valueZ = document.getElementById("J_rz");
+            var container = document.getElementsByClassName('container')[0];
+
+            scaleX.addEventListener("input", function(e) {
+                var x = scaleX.value,
+                    y = scaleY.value,
+                    z = scaleZ.value;
+                    valueX.setAttribute("value", `${x}deg`);
+                container.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`; 
+            })
+
+            scaleY.addEventListener("input", function(e) {
+                var x = scaleX.value,
+                    y = scaleY.value,
+                    z = scaleZ.value;
+                    valueY.setAttribute("value", `${y}deg`);
+                container.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`; 
+            })
+
+            scaleZ.addEventListener("input", function(e) {
+                var x = scaleX.value,
+                    y = scaleY.value,
+                    z = scaleZ.value;
+                    valueZ.setAttribute("value", `${z}deg`);
+                container.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`; 
+            })
+        </script>
+    </body>
+</html>
