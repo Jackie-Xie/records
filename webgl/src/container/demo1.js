@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Three from 'three.js'
+import Stats from '../utils/stats'
+import dat from '../utils/dat.gui'
 
 class Demo1 extends Component {
     constructor(props) {
@@ -7,6 +9,7 @@ class Demo1 extends Component {
     }
 
     dom = ''
+    statsDom = ''
 
     componentDidMount() {
         //this.demo1();
@@ -128,12 +131,80 @@ class Demo1 extends Component {
 
         renderer.render(scene, camera);
 
+        let step = 0;
 
+        let controls = new function() {
+            this.rotationSpeed = 0.02;
+            this.numberOfObject = scene.children.length;
+
+            this.removeCube = function() {
+                let allChildren = scene.children;
+                let lastObject = allChildren[allChildren.length - 1];
+                if (lastObject instanceof Three.Mesh) {
+                    scene.remove(lastObject);
+                }
+            }
+            
+            this.addCube = function() {
+                let cubeSize = Math.ceil((Math.random() * 3));
+                let cubeGeometry = new Three.BoxGeometry(cubeSize, cubeSize, cubeSize);
+                let cubeMaterial = new Three.MeshLambertMaterial({color: Math.random() * 0xffffff});
+                let cube = new Three.Mesh(cubeGeometry, cubeMaterial);
+                cube.castShadow = true;
+                cube.name = "cube-" + scene.children.length;
+
+                cube.position.x = -30 + Math.round(Math.random() * planeGeometry.parameters.width);
+                cube.position.y = Math.round(Math.random() * 5);
+                cube.position.z = -20 + Math.round(Math.random() * planeGeometry.parameters.height);
+
+                scene.add(cube);
+                this.numberOfObjects = scene.children.length;
+            }
+
+            this.outputObjects = function() {
+                console.log(scene.children);
+            };
+        }
+
+        let gui = new dat.GUI();
+        gui.add(controls, 'rotationSpeed', 0, 0.5);
+        gui.add(controls, 'addCube');
+        gui.add(controls, 'removeCube');
+        gui.add(controls, 'ouputObjects');
+        gui.add(controls, 'numberOfObjects').listen();
+
+        let initStats = () => {
+            var stats = new Stats();
+            stats.setMode(0);
+            this.statsDom.appendChild(stats.domElement);
+            return stats;
+        }
+
+        let stats = initStats();
+
+        function render() {
+            stats.update();
+            scene.traverse(function(e) {
+                if (e instanceof Three.Mesh && e != plane) {
+                    e.rotation.x += controls.rotationSpeed;
+                    e.rotation.y += controls.rotationSpeed;
+                    e.rotation.z += controls.rotationSpeed;
+                }
+            });
+
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+
+        render();
     }
 
     render() {
         return(
-            <div className="container" ref={(dom) => this.dom = dom}></div>
+            <div>
+                <div id="stats-output" ref={(dom) => this.statsDom = dom}></div>
+                <div className="container" ref={(dom) => this.dom = dom}></div>
+            </div>
         )
     }
 }

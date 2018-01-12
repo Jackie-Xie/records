@@ -8,3 +8,9 @@ body {
   height: 600px;
   width: 800px;
 }
+
+.stats-output {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
