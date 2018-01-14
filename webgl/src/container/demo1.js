@@ -104,7 +104,7 @@ class Demo1 extends Component {
         renderer.shadowMapEnabled = true;
         this.dom.appendChild(renderer.domElement);
 
-        let planeGeometry = new Three.PlaneGeometry(30, 20, 1, 1);
+        let planeGeometry = new Three.PlaneGeometry(60, 40, 1, 1);
         let planeMaterial = new Three.MeshLambertMaterial({color: 0xffffff});
         let plane = new Three.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
@@ -164,13 +164,15 @@ class Demo1 extends Component {
             this.outputObjects = function() {
                 console.log(scene.children);
             };
+
+            this.numberOfObjects = scene.children.length;
         }
 
         let gui = new dat.GUI();
         gui.add(controls, 'rotationSpeed', 0, 0.5);
         gui.add(controls, 'addCube');
         gui.add(controls, 'removeCube');
-        gui.add(controls, 'ouputObjects');
+        gui.add(controls, 'outputObjects');
         gui.add(controls, 'numberOfObjects').listen();
 
         let initStats = () => {
