@@ -135,7 +135,7 @@ class Demo1 extends Component {
 
         let controls = new function() {
             this.rotationSpeed = 0.02;
-            this.numberOfObject = scene.children.length;
+            this.numberOfObjects = scene.children.length;
 
             this.removeCube = function() {
                 let allChildren = scene.children;
@@ -158,14 +158,11 @@ class Demo1 extends Component {
                 cube.position.z = -20 + Math.round(Math.random() * planeGeometry.parameters.height);
 
                 scene.add(cube);
-                this.numberOfObjects = scene.children.length;
             }
 
             this.outputObjects = function() {
                 console.log(scene.children);
             };
-
-            this.numberOfObjects = scene.children.length;
         }
 
         let gui = new dat.GUI();
