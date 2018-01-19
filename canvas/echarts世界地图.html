@@ -1,0 +1,178 @@
+<html>
+	<head>
+		<title>echarts 世界地图</title>
+		<style type="text/css">
+			#J_map {
+				width: 100vw;
+				height: 100vh;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="J_map"></div>
+		<script type="text/javascript" src="./echarts.js"></script>
+		<script type="text/javascript" src="./world1.js"></script>
+		<script type="text/javascript" src="./world.js"></script>
+		<script type="text/javascript">
+			var  option = {
+		        title: [],
+		        tooltip: {
+		            trigger: 'none',
+		            axisPointer: {
+		                lineStyle: {
+		                    color: '#57617B'
+		                }
+		            }
+		        },
+		        toolbox: {
+		            show: false,
+		            orient: 'vertical',
+		            left: 'right',
+		            top: 'center',
+		            feature: {
+		                dataView: {
+		                    readOnly: false
+		                },
+		                restore: {},
+		                saveAsImage: {}
+		            }
+		        },
+		        grid: [{
+		            right: 40,
+		            top: 100,
+		            bottom: 40,
+		            width: '20%',
+		            height: '60%',
+		            containLabel: true
+		        }, {
+		            //right: 10,
+		            top: '78%',
+		            width: '60%',
+		            bottom: 10,
+		            left: '20%',
+		            height: '20%',
+		            containLabel: true
+		        }
+		        ],
+		        xAxis: [],
+		        yAxis: [],
+		        geo: {
+		            map: 'world',
+		            roam: false,
+		            itemStyle: {
+		                normal: {
+		                    areaColor: '#323c48',
+		                    borderColor: '#3fdaff',
+		                    borderWidth: 1
+		                },
+		                emphasis: {
+		                    areaColor: '#2a333d'
+		                }
+		            },
+		            label: {
+		                emphasis: {
+		                    show: false
+		                }
+		            },
+		            left: 10,
+		            right: 10,
+		            top: 0,
+		            bottom: 10
+		        },
+		        series: [{
+		            name: '线路',
+		            type: 'lines',
+		            coordinateSystem: 'geo',
+		            zlevel: 2,
+		            large: true,
+		            effect: {
+		                show: true,
+		                constantSpeed: 150,
+		                symbol: 'circle',
+		                symbolSize: 3,
+		                trailLength: 0.001,
+		                loop: true
+		            },
+		            data: [
+	                    {
+	                        "fromName": "厦门",
+	                        "toName": "金泽",
+	                        "coords": [
+	                            [118.06,24.27],
+	                            [136.71956,36.567693]
+	                        ],
+	                        lineStyle: {
+	                        	normal: {
+			                         "width": 1,
+			                         "opacity": 0.2,
+			                         "curveness": 0.4
+	                        	}
+	                        }
+	                    }, {
+	                        "fromName": "厦门",
+	                        "toName": "札幌",
+	                        "coords": [
+	                            [118.06,24.27],
+	                            [141.318884,43.111633]
+	                        ],
+	                        lineStyle: {
+	                        	normal: {
+			                         "width": 1,
+			                         "opacity": 0.2,
+			                         "curveness": 0.4
+	                        	}
+	                        }
+	                    }, {
+	                        "fromName": "厦门",
+	                        "toName": "洛杉矶",
+	                        "coords": [
+	                            [118.06,24.27],
+	                            [-118.305465,34.018897]
+	                        ],
+	                        lineStyle: {
+	                        	normal: {
+			                         "width": 1,
+			                         "opacity": 0.2,
+			                         "curveness": 0.4
+	                        	}
+	                        }
+	                    }, {
+	                        "fromName": "金泽",
+	                        "toName": "温哥华",
+	                        "coords": [
+	                            [136.71956,36.567693],
+	                            [-122.978378,49.297449]
+	                        ],
+	                        lineStyle: {
+	                        	normal: {
+			                         "width": 1,
+			                         "opacity": 0.2,
+			                         "curveness": 0.4
+	                        	}
+	                        }
+	                    }, {
+	                        "fromName": "札幌",
+	                        "toName": "哥伦代尔科夫",
+	                        "coords": [
+	                            [141.318884,43.111633],
+	                            [-125.691979,50.679214]
+	                        ],
+	                        lineStyle: {
+	                        	normal: {
+			                         "width": 1,
+			                         "opacity": 0.2,
+			                         "curveness": 0.4
+	                        	}
+	                        }
+	                    }
+	                ]
+		        }]
+		    };
+
+		    var dom = document.querySelector('#J_map');
+		    var chart = echarts.init(dom);
+		    chart.setOption(option);
+		</script>
+	</body>
+</html>
