@@ -7,15 +7,13 @@ class Demo3 extends Component {
     }
 
     componentDidMount() {
-        this.demo3();
+        this.demo();
     }
 
     dom = ''
 
-    demo3() {
-        let {width, height} = getComputedStyle(this.dom);
-        width = +width.slice(0, -2);
-        height = +height.slice(0, -2);
+    demo() {
+        let [width, height] = [window.innerWidth, window.innerHeight];
 
         let scene = new Three.Scene();
         let camera = new Three.PerspectiveCamera(45, width / height, 0.1, 1000);
@@ -61,13 +59,39 @@ class Demo3 extends Component {
         camera.position.z = 30;
         camera.lookAt(scene.position);
 
+        var ambientLight = new Three.AmbientLight(0x0c0c0c);
+        scene.add(ambientLight);
+
         let spotLight = new Three.SpotLight(0xffffff);
-        spotLight.position.set(-40, 60, -10);
+        spotLight.position.set(-20, 30, -5);
         spotLight.castShadow = true;
         scene.add(spotLight);
 
         this.dom.appendChild(renderer.domElement);
-        renderer.render(scene, camera);
+        scene.fog = new Three.FogExp2(0xffffff, 0.015);
+
+        let step = 0;
+        function render() {
+            step += 0.04;
+            let x = 14 + (10 * Math.sin(step));
+            sphere.position.x = x;
+            sphere.position.y = 4 + (2 * Math.abs(Math.cos(step)));
+            cube.rotation.x = Math.PI*step;
+            cube.rotation.y = Math.PI*step;
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+
+        render();
+
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.addEventListener('resize', onResize, false);
+
     }
 
     render() {
