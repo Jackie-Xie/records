@@ -26,7 +26,7 @@ class Demo3 extends Component {
         renderer.shadowMapEnabled = true;
 
         let planeGeometry = new Three.PlaneGeometry(60, 20)
-        let planeMaterial = new Three.MeshLambertMaterial({color: 0xffffff});
+        let planeMaterial = new Three.MeshLambertMaterial({color: 0xffffff, specular: 0x050505});
         let plane = new Three.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
 
@@ -56,8 +56,8 @@ class Demo3 extends Component {
         sphere.castShadow = true;
         scene.add(sphere);
 
-        camera.position.x = -30;
-        camera.position.y = 40;
+        camera.position.x = -40;
+        camera.position.y = 30;
         camera.position.z = 30;
         camera.lookAt(scene.position);
 

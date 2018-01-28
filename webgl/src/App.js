@@ -11,7 +11,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+<<<<<<< HEAD
        { Detector.webgl ? <Demo4 /> : <Warning />}
+=======
+        {Detector.webgl ? <Demo4 /> : <Warning />}
+>>>>>>> a8eb015b6dda733d448ddbddde0201974fe8c1b4
       </div>
     );
   }
