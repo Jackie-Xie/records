@@ -3,7 +3,6 @@ import './App.css';
 import Demo1 from './container/demo1';
 import Demo2 from './container/demo2';
 import Demo3 from './container/demo3';
-import Demo4 from './container/demo4';
 import Detector from './utils/detector';
 import MeshMaterialDemo from './container/meshFaceMaterial';
 import MagicCube from './container/magicCube';
