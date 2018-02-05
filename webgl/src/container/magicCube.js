@@ -15,7 +15,7 @@ class MagicCube extends Component {
 
         let scene = new Three.Scene();
         let camera = new Three.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(-40, 30, 40);
+        camera.position.set(-40, 30, 50);
         camera.lookAt(scene.position);
 
         let renderer = new Three.WebGLRenderer();
@@ -51,9 +51,6 @@ class MagicCube extends Component {
         ];
 
         let faceMaterial = new Three.MeshFaceMaterial(arrMatrial);
-        // let cube = new Three.Mesh(cubeGeometry, faceMaterial);
-        // cube.position.set(0, 4, 0);
-        // scene.add(cube);
         let container = new Three.Object3D();
 
         for(let x=0; x<3; x++) {
@@ -69,23 +66,51 @@ class MagicCube extends Component {
             container.add(layer);
         }
 
-        scene.add(container);
+        //scene.add(container);
         let render = () => {
-            container.rotation.x += 0.01;
-            container.children[0].rotation.x -= 0.01*Math.PI;
-            container.children[1].rotation.x += 0.01;
-            container.children[2].rotation.x -= 0.02;
+            //container.rotation.x += 0.01;
+            //container.children[0].rotation.x -= 0.01*Math.PI;
+            //container.children[1].rotation.x += 0.01;
+            //container.children[2].rotation.x -= 0.02;
+            let bucket = scene.getChildByName('tmp-shown');
+            if(currentAction.step > 0) {
+                bucket['children'][currentAction['index']].rotation[currentAction['direction']] += currentAction['delta'];
+                currentAction.step --;
+            }
 
             requestAnimationFrame(render);
             renderer.render(scene, camera);
         }
 
+        let currentAction = {
+            direction: 'x',
+            delta: 0,
+            index: 0,
+            step: 0
+        };
+
+        let addBucket = () => {
+            let obj = scene.getChildByName('tmp-shown');
+            let childBucket;
+            if(!obj) {
+                childBucket = container.clone();
+            } else {
+                childBucket = obj.clone();
+                scene.remove(obj);
+            }
+            childBucket.name = 'tmp-shown';
+            return childBucket;
+        };
+
+        let bucket = addBucket();
+        scene.add(bucket);
+
         let controls = new function() {
             this.frontLeft = function() {
-                
+
             };
             this.frontRight = function() {
-
+                
             };
             this.behindLeft = function() {
 
@@ -94,16 +119,44 @@ class MagicCube extends Component {
 
             };
             this.leftTop = function() {
-
+                let bucket = addBucket();
+                currentAction = {
+                    direction: 'x',
+                    delta: -0.05 * Math.PI,
+                    index: 0,
+                    step: 10
+                };
+                scene.add(bucket);
             };
             this.leftBottom = function() {
-
+                let bucket = addBucket();
+                currentAction = {
+                    direction: 'x',
+                    delta: 0.05 * Math.PI,
+                    index: 0,
+                    step: 10
+                };
+                scene.add(bucket);
             };
             this.rightTop = function() {
-
+                let bucket = addBucket();
+                currentAction = {
+                    direction: 'x',
+                    delta: -0.05 * Math.PI,
+                    index: 2,
+                    step: 10
+                };
+                scene.add(bucket);
             };
             this.rightBottom = function() {
-
+                let bucket = addBucket();
+                currentAction = {
+                    direction: 'x',
+                    delta: 0.05 * Math.PI,
+                    index: 2,
+                    step: 10
+                };
+                scene.add(bucket);
             };
             this.topLeft = function() {
 
